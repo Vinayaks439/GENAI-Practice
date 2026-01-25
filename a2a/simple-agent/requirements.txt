@@ -1,0 +1,6 @@
+google-adk
+a2a-sdk
+uvicorn
+fastapi
+httpx
+pydantic
