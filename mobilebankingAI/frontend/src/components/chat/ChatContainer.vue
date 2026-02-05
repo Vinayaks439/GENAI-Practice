@@ -16,7 +16,7 @@ export interface Message {
 const messages = ref<Message[]>([
   {
     id: 1,
-    text: 'Hello! Welcome to Mobile Banking Assistant. How can I help you today?',
+    text: 'Hello! Welcome to Mobile Banking Assistant. I can help you with:\n\n• Check account balance & summary\n• Transfer money\n• Apply for loans\n• Invest in mutual funds\n\nWhat would you like to do today?',
     sender: 'bot',
     timestamp: new Date(Date.now() - 60000),
   },
@@ -25,6 +25,15 @@ const messages = ref<Message[]>([
 const messagesContainer = ref<HTMLElement | null>(null)
 const isLoading = ref(false)
 const headerStatus = ref<'online' | 'offline' | 'typing'>('online')
+
+// Quick action suggestions
+const quickActions = [
+  { label: 'Check Balance', message: 'Show me my account balance' },
+  { label: 'Account Summary', message: 'Give me a complete account summary' },
+  { label: 'Transfer Money', message: 'I want to transfer money' },
+  { label: 'Apply for Loan', message: 'I need a loan' },
+  { label: 'Invest', message: 'I want to invest in mutual funds' },
+]
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -79,6 +88,10 @@ const sendMessage = async (text: string) => {
     headerStatus.value = 'online'
   }
 }
+
+const handleQuickAction = (message: string) => {
+  sendMessage(message)
+}
 </script>
 
 <template>
@@ -96,10 +109,33 @@ const sendMessage = async (text: string) => {
           :key="message.id"
           :message="message"
         />
+        
+        <!-- Typing indicator -->
+        <div v-if="isLoading" class="typing-indicator">
+          <div class="message-bubble bot">
+            <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
-    <ChatInput @send="sendMessage" />
+    <!-- Quick Actions -->
+    <div class="quick-actions" v-if="messages.length <= 2">
+      <button 
+        v-for="action in quickActions" 
+        :key="action.label"
+        class="quick-action-btn"
+        @click="handleQuickAction(action.message)"
+      >
+        {{ action.label }}
+      </button>
+    </div>
+    
+    <ChatInput @send="sendMessage" :disabled="isLoading" />
   </div>
 </template>
 
@@ -126,6 +162,78 @@ const sendMessage = async (text: string) => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid #e0e0e0;
+}
+
+.quick-action-btn {
+  padding: 8px 16px;
+  background-color: #128c7e;
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.quick-action-btn:hover {
+  background-color: #075e54;
+  transform: scale(1.02);
+}
+
+.quick-action-btn:active {
+  transform: scale(0.98);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+
+.typing-indicator .message-bubble {
+  background-color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-top-left-radius: 0;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.typing-dots span {
+  width: 8px;
+  height: 8px;
+  background-color: #888;
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Custom scrollbar */

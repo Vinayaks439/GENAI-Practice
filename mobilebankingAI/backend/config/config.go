@@ -1,6 +1,9 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"os"
+	"strconv"
+)
 
 type Config struct {
 	Port                 int    `mapstructure:"PORT"`
@@ -16,13 +19,33 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
-	var config *Config
-	viper.AutomaticEnv()
-	viper.AddConfigPath("app")
-	viper.SetConfigName("env")
-	if err := viper.ReadInConfig(); err != nil {
-		return config, err
+	config := &Config{
+		Port:                 getEnvInt("PORT", 8080),
+		Host:                 getEnv("HOST", "0.0.0.0"),
+		DBUser:               getEnv("DB_USER", "root"),
+		DBPass:               getEnv("DB_PASS", "secret"),
+		DBHost:               getEnv("DB_HOST", "localhost"),
+		DBPort:               getEnvInt("DB_PORT", 5432),
+		SummaryAgentCardUrl:  getEnv("SUMMARY_AGENT_CARD_URL", "http://localhost:9001"),
+		TransferAgentCardUrl: getEnv("TRANSFER_AGENT_CARD_URL", "http://localhost:9002"),
+		LoadAgentCardUrl:     getEnv("LOAD_AGENT_CARD_URL", "http://localhost:9003"),
+		InvestAgentCardUrl:   getEnv("INVEST_AGENT_CARD_URL", "http://localhost:9004"),
 	}
-	err := viper.Unmarshal(&config)
-	return config, err
+	return config, nil
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func getEnvInt(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intVal, err := strconv.Atoi(value); err == nil {
+			return intVal
+		}
+	}
+	return defaultValue
 }

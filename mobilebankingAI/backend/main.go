@@ -4,12 +4,12 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
+	"backend/config"
+	db "backend/db/sqlc"
+	"backend/pkg"
 	"context"
 	"fmt"
 	"log/slog"
-	"mobilebankingAI/backend/config"
-	"mobilebankingAI/backend/pkg"
-	db "mobilebankingAI/db/sqlc"
 	"os"
 
 	"github.com/gin-gonic/gin"
