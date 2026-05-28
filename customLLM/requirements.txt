@@ -1,0 +1,12 @@
+torch>=2.2
+numpy
+pandas
+matplotlib
+tqdm
+tiktoken
+regex
+kagglehub>=0.3.13,<1.0
+safetensors
+huggingface_hub
+jupyter
+ipykernel
