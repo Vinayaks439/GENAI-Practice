@@ -747,3 +747,7 @@ python train_e2e.py --emb-dim 512 --n-heads 8 --n-layers 8 \
 | **Top-p (nucleus)** | Restrict sampling to smallest set with cumulative prob ≥ p |
 | **Warmup** | Gradual LR increase at training start to prevent early instability |
 | **Weight decay** | L2 regularisation on model weights to reduce overfitting |
+
+
+## 16. References
+- [Transformer Arch using pytorch](https://medium.com/data-science/build-your-own-transformer-from-scratch-using-pytorch-84c850470dcb)
